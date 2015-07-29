@@ -1,0 +1,65 @@
+<html>
+<head>
+	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="../src/newick.js"></script>
+	<link rel="stylesheet" href="demo.css">
+<body>
+	<p>
+		Parse newick tree:
+		<input id="input-parse" type="text" value="(A: 0.1,B: 0.2,(C:0.3,D:0.4)E:0.5)F;">
+		<br>
+		<button id="submit-parse" type="button">Submit</button>
+		<br>
+		Result:
+		<span id="result-parse" class="result"></span>
+	</p>
+
+	<hr>
+
+	<p>
+		Put the weights proportionally to leaves (drown-weighted newick):
+		<input id="input-drown" type="text" value="(A: 0.1,B: 0.2,(C:0.3,D:0.4)E:0.5)F;">
+		<br>
+		<button id="submit-drown" type="button">Submit</button>
+		<br>
+		Result:
+		<span id="result-drown" class="result"></span>
+	</p>
+
+	<hr>
+
+	<p>
+		Normalize newick tree:
+		<input id="input-normalize" type="text" value="(A: 0.1,B: 0.2,(C:0.3,D:0.4)E:0.5)F;">
+		<br>
+		<button id="submit-normalize" type="button">Submit</button>
+		<br>
+		Result:
+		<span id="result-normalize" class="result"></span>
+	</p>
+
+	<hr>
+
+
+
+
+
+
+	<script>
+		$('#submit-parse').on('click', function () {
+			var result = Newick.parse($('#input-parse').val());
+			$('#result-parse').text(JSON.stringify(result, null, 4))
+		});
+
+		$('#submit-drown').on('click', function () {
+			var result = Newick.drown($('#input-drown').val());
+			$('#result-drown').text(JSON.stringify(result, null, 4))
+		});
+
+		$('#submit-normalize').on('click', function () {
+			var result = Newick.normalize($('#input-normalize').val());
+			$('#result-normalize').text(JSON.stringify(result, null, 4))
+		});
+	</script>
+</body>
+</html>

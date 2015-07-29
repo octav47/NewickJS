@@ -2,17 +2,17 @@
  * Newick format parser in JavaScript.
  *
  * Copyright (c) Jason Davies 2010.
- *  
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *  
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *  
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -57,46 +57,141 @@
  *   ]
  * }
  */
-(function(exports) {
-  exports.parse = function(s) {
-    var ancestors = [];
-    var tree = {};
-    var tokens = s.split(/\s*(;|\(|\)|,|:)\s*/);
-    for (var i=0; i<tokens.length; i++) {
-      var token = tokens[i];
-      switch (token) {
-        case '(': // new branchset
-          var subtree = {};
-          tree.branchset = [subtree];
-          ancestors.push(tree);
-          tree = subtree;
-          break;
-        case ',': // another branch
-          var subtree = {};
-          ancestors[ancestors.length-1].branchset.push(subtree);
-          tree = subtree;
-          break;
-        case ')': // optional name next
-          tree = ancestors.pop();
-          break;
-        case ':': // optional length next
-          break;
-        default:
-          var x = tokens[i-1];
-          if (x == ')' || x == '(' || x == ',') {
-            tree.name = token;
-          } else if (x == ':') {
-            tree.length = parseFloat(token);
-          }
-      }
+
+var Newick = {};
+
+(function () {
+    Newick.parse = function (s) {
+        var ancestors = [];
+        var tree = {};
+        var tokens = s.split(/\s*(;|\(|\)|,|:)\s*/);
+        for (var i = 0; i < tokens.length; i++) {
+            var token = tokens[i];
+            switch (token) {
+                case '(': // new branchset
+                    var subtree = {};
+                    tree.branchset = [subtree];
+                    ancestors.push(tree);
+                    tree = subtree;
+                    break;
+                case ',': // another branch
+                    var subtree = {};
+                    ancestors[ancestors.length - 1].branchset.push(subtree);
+                    tree = subtree;
+                    break;
+                case ')': // optional name next
+                    tree = ancestors.pop();
+                    break;
+                case ':': // optional length next
+                    break;
+                default:
+                    var x = tokens[i - 1];
+                    if (x == ')' || x == '(' || x == ',') {
+                        tree.name = token;
+                    } else if (x == ':') {
+                        tree.length = parseFloat(token);
+                    }
+            }
+        }
+        return tree;
+    };
+
+    function cast(s) {
+        if (typeof s == 'string') {
+            try {
+                s = JSON.parse(s);
+            } catch (e) {
+                s = Newick.parse(s);
+            }
+        }
+        return s;
     }
-    return tree;
-  };
+
+    function getRoot(s) {
+        var w = {};
+        for (var i in s) {
+            if (s.hasOwnProperty(i)) {
+                w[i] = s[i];
+            }
+        }
+        return w;
+    }
+
+    Newick.dfs = function (tree, newVertex) {
+        var vertex = {};
+
+        function _dfs(tree) {
+            var branchset = tree.branchset || [];
+            if (branchset.length !== 0) {
+                for (var i = 0; i < branchset.length; i++) {
+                    if (newVertex) {
+                        if (newVertex[branchset[i].name]) {
+                            branchset[i].length = newVertex[branchset[i].name];
+                        }
+                    } else {
+                        vertex[branchset[i].name] = branchset[i].length;
+                    }
+                    _dfs(branchset[i]);
+                }
+            }
+        }
+
+        tree = cast(tree);
+        _dfs(tree);
+        return vertex;
+    };
+
+    Newick.drown = function (s) {
+        s = cast(s);
+        function _drown(tree) {
+            var branchset = tree.branchset || [];
+            if (tree.hasOwnProperty('length')) {
+                var s = 0;
+                for (var i = 0; i < branchset.length; i++) {
+                    s += branchset[i].length;
+                }
+                var x = tree.length / s;
+                for (var i = 0; i < branchset.length; i++) {
+                    branchset[i].length += branchset[i].length * x;
+                }
+                if (branchset.length != 0) {
+                    tree.length = 0;
+                }
+                console.log(tree);
+            }
+            for (var i = 0; i < branchset.length; i++) {
+                _drown(branchset[i]);
+            }
+        }
+
+        _drown(s);
+        return s;
+    };
+
+    Newick.normalize = function (s) {
+        s = cast(s);
+        // TODO
+        var vertex = Newick.dfs(s);
+        var total = 0;
+        for (var i in vertex) {
+            if (vertex.hasOwnProperty(i)) {
+                total += vertex[i];
+            }
+        }
+        return Newick.dfs(s, vertex);
+    };
+
+    Newick.print = function (s) {
+        s = cast(s);
+
+    }
+
+
 })(
-    // exports will be set in any commonjs platform; use it if it's available
-    typeof exports !== "undefined" ?
-    exports :
-    // otherwise construct a name space.  outside the anonymous function,
-    // "this" will always be "window" in a browser, even in strict mode.
-    this.Newick = {}
+    // Newick will be set in any commonjs platform; use it if it's available
+    typeof Newick !== "undefined" ?
+        Newick :
+        // otherwise construct a name space.  outside the anonymous function,
+        // "this" will always be "window" in a browser, even in strict mode.
+        this.Newick = {}
 );
