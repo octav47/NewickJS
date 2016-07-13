@@ -59,9 +59,18 @@
  * }
  */
 
+/**
+ *
+ * @type {{}}
+ */
 var Newick = {};
 
 (function () {
+    /**
+     *
+     * @param {string} s Newick-formatted tree, ex. '(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F;'
+     * @returns {object} tree
+     */
     Newick.parse = function (s) {
         var ancestors = [];
         var tree = {};
@@ -97,6 +106,11 @@ var Newick = {};
         return tree;
     };
 
+    /**
+     * Casts tree (pre-parsed string or object) to parsed tree object
+     * @param {string|object} s Newick-formatted pre-parsed string or tree object
+     * @returns {object} Parsed tree object
+     */
     function cast(s) {
         if (typeof s == 'string') {
             try {
@@ -108,6 +122,11 @@ var Newick = {};
         return s;
     }
 
+    /**
+     * Returns a root of a tree
+     * @param {object} s Tree object
+     * @returns {{}}
+     */
     function getRoot(s) {
         var w = {};
         for (var i in s) {
@@ -118,6 +137,12 @@ var Newick = {};
         return w;
     }
 
+    /**
+     * DFS algorithm in a Newick tree
+     * @param {string|object} tree Pre-parsed string or tree object
+     * @param {object} newVertex Vertex to start
+     * @returns {{}}
+     */
     Newick.dfs = function (tree, newVertex) {
         var vertex = {};
 
@@ -142,6 +167,11 @@ var Newick = {};
         return vertex;
     };
 
+    /**
+     * I don't remember, what this should do :(
+     * @param s
+     * @returns {Object|*}
+     */
     Newick.drown = function (s) {
         s = cast(s);
         function _drown(tree) {
@@ -169,6 +199,11 @@ var Newick = {};
         return s;
     };
 
+    /**
+     * Normalizes tree
+     * @param {string|object} s Pre-parsed string or tree object
+     * @returns {Object|*}
+     */
     Newick.normalize = function (s) {
         s = cast(s);
         // TODO
