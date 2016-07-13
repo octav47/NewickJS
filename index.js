@@ -1,8 +1,10 @@
+'use strict';
+
 /**
  * Newick format parser in JavaScript.
  *
  * Copyright (c) Jason Davies 2010.
- * Updates by Cyrus Tribunsky 2015-2016.
+ * Updates by Kir Tribunsky 2015-2016.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -200,3 +202,5 @@ var Newick = {};
         // "this" will always be "window" in a browser, even in strict mode.
         this.Newick = {}
 );
+
+module.exports = Newick;
