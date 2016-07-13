@@ -38,3 +38,9 @@ newick.parse('(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F')
  *
 */
 ```
+
+> Look at inline docs on github for interesting moments
+
+## TODO:
+* Newick.dfs: tests
+* Newick.normalize
