@@ -59,19 +59,13 @@
  * }
  */
 
-/**
- *
- * @type {{}}
- */
-var Newick = {};
-
-(function () {
+(function (exports) {
     /**
      *
      * @param {string} s Newick-formatted tree, ex. '(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F;'
      * @returns {object} tree
      */
-    Newick.parse = function (s) {
+    exports.parse = function (s) {
         var ancestors = [];
         var tree = {};
         var tokens = s.split(/\s*(;|\(|\)|,|:)\s*/);
@@ -143,7 +137,7 @@ var Newick = {};
      * @param {object} newVertex Vertex to start
      * @returns {{}}
      */
-    Newick.dfs = function (tree, newVertex) {
+    exports.dfs = function (tree, newVertex) {
         var vertex = {};
 
         function _dfs(tree) {
@@ -172,7 +166,7 @@ var Newick = {};
      * @param s
      * @returns {Object|*}
      */
-    Newick.drown = function (s) {
+    exports.drown = function (s) {
         s = cast(s);
         function _drown(tree) {
             var branchset = tree.branchset || [];
@@ -204,7 +198,7 @@ var Newick = {};
      * @param {string|object} s Pre-parsed string or tree object
      * @returns {Object|*}
      */
-    Newick.normalize = function (s) {
+    exports.normalize = function (s) {
         s = cast(s);
         // TODO
         function _normalize(tree) {
@@ -229,8 +223,8 @@ var Newick = {};
     };
 })(
     // Newick will be set in any commonjs platform; use it if it's available
-    typeof Newick !== "undefined" ?
-        Newick :
+    typeof exports !== "undefined" ?
+        exports :
         // otherwise construct a name space.  outside the anonymous function,
         // "this" will always be "window" in a browser, even in strict mode.
         this.Newick = {}
