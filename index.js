@@ -3,8 +3,7 @@
 /**
  * Newick format parser in JavaScript.
  *
- * Copyright (c) Jason Davies 2010.
- * Updates by Kir Tribunsky 2015-2016.
+ * Copyright (c) Jason Davies 2010, Kir Tribunsky 2015.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,10 +60,13 @@
  * }
  */
 
-var Newick = {};
-
-(function () {
-    Newick.parse = function (s) {
+(function (exports) {
+    /**
+     * Parse Newick string into tree-object
+     * @param {string} s Newick string
+     * @return {object}
+     */
+    exports.parse = function (s) {
         var ancestors = [];
         var tree = {};
         var tokens = s.split(/\s*(;|\(|\)|,|:)\s*/);
@@ -99,6 +101,11 @@ var Newick = {};
         return tree;
     };
 
+    /**
+     * Casts tree or string to tree-object
+     * @param {string|object} s
+     * @returns {object}
+     */
     function cast(s) {
         if (typeof s == 'string') {
             try {
@@ -110,6 +117,7 @@ var Newick = {};
         return s;
     }
 
+    // TODO
     function getRoot(s) {
         var w = {};
         for (var i in s) {
@@ -120,7 +128,17 @@ var Newick = {};
         return w;
     }
 
-    Newick.dfs = function (tree, newVertex) {
+    /**
+     * Depth-first search
+     * I don't know, what it should do. Really.
+     * @param {string|object} tree
+     * @param [newVertex]
+     * @param [vertexOperation]
+     * @returns {object}
+     */
+    exports.dfs = function (tree, newVertex, vertexOperation) {
+        vertexOperation = vertexOperation || function (e) { return e; };
+
         var vertex = {};
 
         function _dfs(tree) {
@@ -133,6 +151,8 @@ var Newick = {};
                         }
                     } else {
                         vertex[branchset[i].name] = branchset[i].length;
+
+                        tree.branchset[i] = vertexOperation(tree.branchset[i]);
                     }
                     _dfs(branchset[i]);
                 }
@@ -144,7 +164,7 @@ var Newick = {};
         return vertex;
     };
 
-    Newick.drown = function (s) {
+    exports.drown = function (s) {
         s = cast(s);
         function _drown(tree) {
             var branchset = tree.branchset || [];
@@ -171,36 +191,28 @@ var Newick = {};
         return s;
     };
 
-    Newick.normalize = function (s) {
+    /**
+     * Returns normalized tree
+     * @param {string|object} s Tree
+     * @returns {object}
+     */
+    exports.normalize = function (s) {
         s = cast(s);
-        // TODO
         function _normalize(tree) {
-            var vertex = Newick.dfs(tree);
-            console.log(vertex);
+            var vertex = exports.dfs(tree);
             var total = 0;
             for (var i in vertex) {
                 if (vertex.hasOwnProperty(i)) {
                     total += vertex[i];
                 }
             }
-            console.log(total);
-            for (var i in vertex) {
-                if (vertex.hasOwnProperty(i)) {
-                    vertex[i] = 0;
-                }
-            }
+            exports.dfs(tree, null, function (e) {
+                e.length = (e.length * 100) / total;
+                return e;
+            });
+            return tree;
         }
 
-        _normalize(s);
-        return s;
+        return _normalize(s);
     };
-})(
-    // Newick will be set in any commonjs platform; use it if it's available
-    typeof Newick !== "undefined" ?
-        Newick :
-        // otherwise construct a name space.  outside the anonymous function,
-        // "this" will always be "window" in a browser, even in strict mode.
-        this.Newick = {}
-);
-
-module.exports = Newick;
+})(typeof exports !== "undefined" ? exports : this.Newick = {});
