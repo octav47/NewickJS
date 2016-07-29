@@ -192,7 +192,7 @@
     };
 
     /**
-     * Returns normalized tree
+     * Returns normalized tree in [0; 1]
      * @param {string|object} s Tree
      * @returns {object}
      */
@@ -207,7 +207,7 @@
                 }
             }
             exports.dfs(tree, null, function (e) {
-                e.length = (e.length * 100) / total;
+                e.length = (e.length) / total;
                 return e;
             });
             return tree;
