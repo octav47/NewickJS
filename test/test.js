@@ -3,7 +3,9 @@
  */
 var Newick = require('../index.js');
 
-var tree = Newick.parse('(A: 0.1,B: 0.2,(C:0.3,D:0.4)E:0.5)F;');
+var treeString = '(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F;';
+
+var tree = Newick.parse(treeString);
 var assert = function (x) {
     if (x) {
         console.log('.');
@@ -14,6 +16,9 @@ var assert = function (x) {
 assert(tree.name == 'F');
 assert(tree.branchset.length == 3);
 assert(tree.branchset[0].name == 'A');
+
+var serializedTree = Newick.serialize(tree);
+assert(serializedTree === treeString.replace(/\s+/g, ''));
 
 var normalizedDataTest = {
     b: 5.2631578947368425,

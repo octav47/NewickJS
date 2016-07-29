@@ -3,7 +3,7 @@
 /**
  * Newick format parser in JavaScript.
  *
- * Copyright (c) Jason Davies 2010, Kir Tribunsky 2015.
+ * Copyright (c) Jason Davies 2010, Thomas Sibley 2014, Kir Tribunsky 2015.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -137,7 +137,9 @@
      * @returns {object}
      */
     exports.dfs = function (tree, newVertex, vertexOperation) {
-        vertexOperation = vertexOperation || function (e) { return e; };
+        vertexOperation = vertexOperation || function (e) {
+                return e;
+            };
 
         var vertex = {};
 
@@ -215,4 +217,25 @@
 
         return _normalize(s);
     };
+
+    /**
+     * Serializes tree
+     * @param {object} tree Tree-object
+     * @returns {string}
+     */
+    exports.serialize = function (tree) {
+        return serialize(tree) + ";";
+    };
+
+    function serialize(node) {
+        var newick = "";
+        if (node.branchset && node.branchset.length)
+            newick += "(" + node.branchset.map(serialize).join(",") + ")";
+        if (node.name != null)
+            newick += node.name;
+        if (node.length != null)
+            newick += ":" + node.length;
+        return newick;
+    }
+
 })(typeof exports !== "undefined" ? exports : this.Newick = {});

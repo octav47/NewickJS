@@ -51,17 +51,10 @@ var vertex = newick.dfs(tree); // tree is a string or object
  *
 */
 
-var tree2 = '(A:25,B:100)F';
-var normalizedTree = newick.normalize(;
+var serializedTree = newick.serialize(tree);
 /*
- * returns object
-  * {
-  *   name: "F",
-  *   branchset: [
-  *     {name: "A", length: 0.2},
-  *     {name: "B", length: 0.8}
-  *   ]
-  * }
+ * returns string
+ * '(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F;'
  *
 */
 ```
