@@ -65,6 +65,10 @@
      * Parse Newick string into tree-object
      * @param {string} s Newick string
      * @return {object}
+     *
+     * @example
+     * var treeString = '(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F;';
+     * var tree = Newick.parse(treeString);
      */
     exports.parse = function (s) {
         var ancestors = [];
@@ -103,6 +107,7 @@
 
     /**
      * Casts tree or string to tree-object
+     * @private
      * @param {string|object} s Newick-string or tree-object
      * @returns {object}
      */
@@ -117,26 +122,38 @@
         return s;
     }
 
-    // TODO
-    function getRoot(s) {
-        var w = {};
-        for (var i in s) {
-            if (s.hasOwnProperty(i)) {
-                w[i] = s[i];
+    /**
+     * Returns a root of the tree
+     * @param {string|object} tree Newick-string or tree-object
+     * @returns {string}
+     */
+    exports.getRoot = function (tree) {
+        return getRoot(tree);
+    };
+
+    /**
+     * Returns a root of the tree
+     * @private
+     * @param {string|object} tree Newick-string or tree-object
+     * @returns {string}
+     */
+    function getRoot(tree) {
+        tree = cast(tree);
+        for (var i in tree) {
+            if (tree.hasOwnProperty(i) && i == 'name') {
+                return tree[i];
             }
         }
-        return w;
     }
 
     /**
      * Depth-first search
      * @param {string|object} tree Newick-string or tree-object
-     * @param [newVertex]
-     * @param [vertexOperation]
+     * @param [nodeCallback]
      * @returns {object}
      */
-    exports.dfs = function (tree, newVertex, vertexOperation) {
-        vertexOperation = vertexOperation || function (e) {
+    exports.dfs = function (tree, nodeCallback) {
+        nodeCallback = nodeCallback || function (e) {
                 return e;
             };
 
@@ -146,15 +163,8 @@
             var branchset = tree.branchset || [];
             if (branchset.length !== 0) {
                 for (var i = 0; i < branchset.length; i++) {
-                    if (newVertex) {
-                        if (newVertex[branchset[i].name]) {
-                            branchset[i].length = newVertex[branchset[i].name];
-                        }
-                    } else {
-                        vertex[branchset[i].name] = branchset[i].length;
-
-                        tree.branchset[i] = vertexOperation(tree.branchset[i]);
-                    }
+                    vertex[branchset[i].name] = branchset[i].length;
+                    tree.branchset[i] = nodeCallback(tree.branchset[i]);
                     _dfs(branchset[i]);
                 }
             }
