@@ -103,7 +103,7 @@
 
     /**
      * Casts tree or string to tree-object
-     * @param {string|object} s
+     * @param {string|object} s Newick-string or tree-object
      * @returns {object}
      */
     function cast(s) {
@@ -130,8 +130,7 @@
 
     /**
      * Depth-first search
-     * I don't know, what it should do. Really.
-     * @param {string|object} tree
+     * @param {string|object} tree Newick-string or tree-object
      * @param [newVertex]
      * @param [vertexOperation]
      * @returns {object}
@@ -166,6 +165,21 @@
         return vertex;
     };
 
+    /**
+     * Maps each node with operation
+     * @param {string|object} tree Newick-string or tree-object
+     * @param {Function} callback Callback will be applied for each node
+     * @returns {object}
+     */
+    exports.map = function (tree, callback) {
+        callback = callback || function (e) {
+                return e;
+            };
+        tree = cast(tree);
+        exports.dfs(tree, null, callback);
+        return tree;
+    };
+
     exports.drown = function (s) {
         s = cast(s);
         function _drown(tree) {
@@ -195,7 +209,7 @@
 
     /**
      * Returns normalized tree in [0; 1]
-     * @param {string|object} s Tree
+     * @param {string|object} s Newick-string or tree-object
      * @returns {object}
      */
     exports.normalize = function (s) {
@@ -220,10 +234,11 @@
 
     /**
      * Serializes tree
-     * @param {object} tree Tree-object
+     * @param {object} tree Newick-string or tree-object
      * @returns {string}
      */
     exports.serialize = function (tree) {
+        tree = cast(tree);
         return serialize(tree) + ";";
     };
 
