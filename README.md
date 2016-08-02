@@ -51,6 +51,45 @@ var vertex = newick.dfs(tree); // tree is a string or object
  *
 */
 
+var normalizedTree = newick.normalize(Newick.parse('(A:5,B:20)F;')); // tree is a string or object
+/*
+ * returns object
+ * {
+ *   name:"F",
+ *   branchset: [
+ *     {name:"A", length: 0.2},
+ *     {name:"B", length: 0.8}
+ *   ]
+ * }
+ *
+*/
+
+// Iterate the nodes!
+var mappedTree = Newick.map(tree, function (e) {
+  e.length *= 10;
+  e.name += ' mapped';
+  return e;
+});
+/*
+ * returns object
+ * {
+ *   name: "F mapped",
+ *   branchset: [
+ *     {name: "A mapped", length: 1},
+ *     {name: "B mapped", length: 2},
+ *     {
+ *       name: "E mapped",
+ *       length: 5,
+ *       branchset: [
+ *         {name: "C mapped", length: 3},
+ *         {name: "D mapped", length: 4}
+ *       ]
+ *     }
+ *   ]
+ * }
+ *
+*/
+
 var serializedTree = newick.serialize(tree);
 /*
  * returns string
