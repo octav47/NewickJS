@@ -1,4 +1,6 @@
-# Newick parser
+<img src="http://tribunsky.com/img/newick_logo.png" width="256">
+
+# NewickJS
 
 > JavaScript library for parsing the Newick format.
 
