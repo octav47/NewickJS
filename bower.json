@@ -1,0 +1,22 @@
+{
+  "name": "newick",
+  "description": "A Newick tree parser",
+  "main": "index.js",
+  "authors": [
+    "Kir Tribunsky"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "newick",
+    "tree",
+    "parser"
+  ],
+  "homepage": "https://github.com/octav47/newick.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
