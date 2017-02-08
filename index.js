@@ -60,9 +60,86 @@
  * }
  */
 
-(function (exports) {
+(function () {
+    /**
+     *
+     * @param {string|object} data Input data
+     * @constructor
+     */
+    function Newick(data) {
+        var self = this;
+
+        var tree = cast(data);
+
+        /**
+         * Returns a root of the tree
+         * @public
+         * @returns {string}
+         */
+        self.getRoot = function () {
+            return _getRoot(tree);
+        };
+
+        /**
+         * Depth-first search
+         * @public
+         * @param [nodeCallback]
+         * @returns {object}
+         */
+        self.dfs = function (nodeCallback) {
+            tree = _dfs(tree, nodeCallback);
+            return tree;
+        };
+
+        /**
+         * Maps each node with operation
+         * @public
+         * @param callback
+         */
+        self.map = function (callback) {
+            tree = _map(tree, callback);
+        };
+
+        /**
+         * Returns normalized tree in [0; 1]
+         * @public
+         */
+        self.normalize = function () {
+            tree = _normalize(tree);
+        };
+
+        /**
+         * Serializes tree
+         * @public
+         * @returns {string}
+         */
+        self.serialize = function () {
+            return _serialize(tree);
+        };
+
+        /**
+         * Serializes tree
+         * @public
+         * @override
+         * @return {string}
+         */
+        self.toString = function () {
+            return self.serialize();
+        };
+
+        /**
+         * Clones Newick object
+         * @public
+         * @return {Newick}
+         */
+        self.clone = function () {
+            return new Newick(tree);
+        };
+    }
+
     /**
      * Parse Newick string into tree-object
+     * @static
      * @param {string} s Newick string
      * @return {object}
      *
@@ -70,7 +147,7 @@
      * var treeString = '(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F;';
      * var tree = Newick.parse(treeString);
      */
-    exports.parse = function (s) {
+    var _parse = function (s) {
         var ancestors = [];
         var tree = {};
         var tokens = s.split(/\s*(;|\(|\)|,|:)\s*/);
@@ -104,6 +181,7 @@
         }
         return tree;
     };
+    Newick.parse = _parse;
 
     /**
      * Casts tree or string to tree-object
@@ -124,12 +202,14 @@
 
     /**
      * Returns a root of the tree
+     * @static
      * @param {string|object} tree Newick-string or tree-object
      * @returns {string}
      */
-    exports.getRoot = function (tree) {
+    var _getRoot = function (tree) {
         return getRoot(tree);
     };
+    Newick.getRoot = _getRoot;
 
     /**
      * Returns a root of the tree
@@ -148,51 +228,55 @@
 
     /**
      * Depth-first search
+     * @static
      * @param {string|object} tree Newick-string or tree-object
      * @param [nodeCallback]
      * @returns {object}
      */
-    exports.dfs = function (tree, nodeCallback) {
+    var _dfs = function (tree, nodeCallback) {
         nodeCallback = nodeCallback || function (e) {
                 return e;
             };
 
         var vertex = {};
 
-        function _dfs(tree) {
+        function _local_dfs(tree) {
             var branchset = tree.branchset || [];
             if (branchset.length !== 0) {
                 for (var i = 0; i < branchset.length; i++) {
                     vertex[branchset[i].name] = branchset[i].length;
                     tree.branchset[i] = nodeCallback(tree.branchset[i]);
-                    _dfs(branchset[i]);
+                    _local_dfs(branchset[i]);
                 }
             }
         }
 
         tree = cast(tree);
-        _dfs(tree);
+        _local_dfs(tree);
         return vertex;
     };
+    Newick.dfs = _dfs;
 
     /**
      * Maps each node with operation
+     * @static
      * @param {string|object} tree Newick-string or tree-object
      * @param {Function} callback Callback will be applied for each node
      * @returns {object}
      */
-    exports.map = function (tree, callback) {
+    var _map = function (tree, callback) {
         callback = callback || function (e) {
                 return e;
             };
         tree = cast(tree);
-        exports.dfs(tree, null, callback);
+        Newick.dfs(tree, null, callback);
         return tree;
     };
+    Newick.map = _map;
 
-    exports.drown = function (s) {
+    var _drown = function (s) {
         s = cast(s);
-        function _drown(tree) {
+        function _local_drown(tree) {
             var branchset = tree.branchset || [];
             if (tree.hasOwnProperty('length')) {
                 var s = 0;
@@ -209,48 +293,53 @@
                 console.log(tree);
             }
             for (var i = 0; i < branchset.length; i++) {
-                _drown(branchset[i]);
+                _local_drown(branchset[i]);
             }
         }
 
-        _drown(s);
+        _local_drown(s);
         return s;
     };
+    Newick.drown = _drown;
 
     /**
      * Returns normalized tree in [0; 1]
+     * @static
      * @param {string|object} s Newick-string or tree-object
      * @returns {object}
      */
-    exports.normalize = function (s) {
+    var _normalize = function (s) {
         s = cast(s);
-        function _normalize(tree) {
-            var vertex = exports.dfs(tree);
+        function _local_normalize(tree) {
+            var vertex = Newick.dfs(tree);
             var total = 0;
             for (var i in vertex) {
                 if (vertex.hasOwnProperty(i)) {
                     total += vertex[i];
                 }
             }
-            exports.dfs(tree, null, function (e) {
+            Newick.dfs(tree, null, function (e) {
                 e.length = (e.length) / total;
                 return e;
             });
             return tree;
         }
 
-        return _normalize(s);
+        return _local_normalize(s);
     };
+    Newick.normalize = _normalize;
 
     /**
      * Serializes tree
+     * @static
      * @param {object} tree Newick-string or tree-object
      * @returns {string}
      */
-    exports.serialize = function (tree) {
+    var _serialize = function (tree) {
         tree = cast(tree);
         return serialize(tree) + ";";
     };
+    Newick.serialize = _serialize;
 
     function serialize(node) {
         var newick = "";
@@ -263,4 +352,10 @@
         return newick;
     }
 
-})(typeof exports !== "undefined" ? exports : this.Newick = {});
+    if (typeof window !== "undefined") {
+        window.Newick = Newick;
+    } else {
+        module.exports = Newick;
+    }
+
+})();
