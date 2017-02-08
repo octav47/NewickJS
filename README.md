@@ -22,10 +22,17 @@ or in browser
 ```
 
 
-## Usage:
+## Usage (nodejs):
 
 ```js
-var newick = require('newick');
+var Newick = require('newick');
+var newick = new Newick('some data');
+```
+
+## Usage (browser):
+
+```js
+var newick = new Newick('some data');
 ```
 
 ## TODO:
