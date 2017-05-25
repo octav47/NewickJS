@@ -148,4 +148,15 @@ console.log('private methods:');
         }
         assert(mappedDataTestResult, 'map');
     })();
+
+    (function () {
+        let tree1 = new Newick(treeString);
+        let tree2 = new Newick(treeString);
+
+        assert(tree1.equal(tree2), 'equal ok');
+
+        tree2 = new Newick('(A:0.11,B:0.22,(C:0.33,D:0.44)E:0.55)F;');
+
+        assert(!tree1.equal(tree2), 'equal not ok');
+    })()
 })();

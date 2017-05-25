@@ -135,6 +135,16 @@
         self.clone = function () {
             return new Newick(tree);
         };
+
+        /**
+         * Check if trees are equal
+         * @public
+         * @param {Newick} anotherTree
+         * @return {boolean}
+         */
+        self.equal = function (anotherTree) {
+            return self.serialize().toLowerCase() === anotherTree.serialize().toLowerCase();
+        };
     }
 
     /**
@@ -147,7 +157,7 @@
      * var treeString = '(A:0.1,B:0.2,(C:0.3,D:0.4)E:0.5)F;';
      * var tree = Newick.parse(treeString);
      */
-    var _parse = function (s) {
+    Newick.parse = function (s) {
         var ancestors = [];
         var tree = {};
         var tokens = s.split(/\s*(;|\(|\)|,|:)\s*/);
@@ -181,7 +191,6 @@
         }
         return tree;
     };
-    Newick.parse = _parse;
 
     /**
      * Casts tree or string to tree-object
@@ -206,10 +215,9 @@
      * @param {string|object} tree Newick-string or tree-object
      * @returns {string}
      */
-    var _getRoot = function (tree) {
+    Newick.getRoot = function (tree) {
         return getRoot(tree);
     };
-    Newick.getRoot = _getRoot;
 
     /**
      * Returns a root of the tree
@@ -233,7 +241,7 @@
      * @param [nodeCallback]
      * @returns {object}
      */
-    var _dfs = function (tree, nodeCallback) {
+    Newick.dfs = function (tree, nodeCallback) {
         nodeCallback = nodeCallback || function (e) {
                 return e;
             };
@@ -255,7 +263,6 @@
         _local_dfs(tree);
         return vertex;
     };
-    Newick.dfs = _dfs;
 
     /**
      * Maps each node with operation
@@ -264,7 +271,7 @@
      * @param {Function} callback Callback will be applied for each node
      * @returns {object}
      */
-    var _map = function (tree, callback) {
+    Newick.map = function (tree, callback) {
         callback = callback || function (e) {
                 return e;
             };
@@ -272,9 +279,8 @@
         Newick.dfs(tree, null, callback);
         return tree;
     };
-    Newick.map = _map;
 
-    var _drown = function (s) {
+    Newick.drown = function (s) {
         s = cast(s);
         function _local_drown(tree) {
             var branchset = tree.branchset || [];
@@ -300,7 +306,6 @@
         _local_drown(s);
         return s;
     };
-    Newick.drown = _drown;
 
     /**
      * Returns normalized tree in [0; 1]
@@ -308,7 +313,7 @@
      * @param {string|object} s Newick-string or tree-object
      * @returns {object}
      */
-    var _normalize = function (s) {
+    Newick.normalize = function (s) {
         s = cast(s);
         function _local_normalize(tree) {
             var vertex = Newick.dfs(tree);
@@ -327,7 +332,6 @@
 
         return _local_normalize(s);
     };
-    Newick.normalize = _normalize;
 
     /**
      * Serializes tree
@@ -335,11 +339,10 @@
      * @param {object} tree Newick-string or tree-object
      * @returns {string}
      */
-    var _serialize = function (tree) {
+    Newick.serialize = function (tree) {
         tree = cast(tree);
         return serialize(tree) + ";";
     };
-    Newick.serialize = _serialize;
 
     function serialize(node) {
         var newick = "";
@@ -351,6 +354,16 @@
             newick += ":" + node.length;
         return newick;
     }
+
+    /**
+     * Checks if two trees are equal
+     * @param {Newick} tree1
+     * @param {Newick} tree2
+     * @return {boolean}
+     */
+    Newick.equals = function (tree1, tree2) {
+        return tree1.equal(tree2);
+    };
 
     if (typeof window !== "undefined") {
         window.Newick = Newick;
