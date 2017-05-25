@@ -1,6 +1,6 @@
 {
   "name": "newick",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "A Newick tree parser",
   "main": "index.js",
   "directories": {
