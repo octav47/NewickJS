@@ -6,34 +6,23 @@
 
 > About Newick format @ wikipedia: http://en.wikipedia.org/wiki/Newick_format
 
-
-## Documentation
-
-[Github Wiki](https://github.com/octav47/NewickJS/wiki)
-
 ## Install
 
 ```
 $ npm install newick
-
-or in browser
-
-<script src="newick.min.js"></script>
 ```
 
-
-## Usage (nodejs):
+## Usage:
 
 ```js
-var Newick = require('newick');
-var newick = new Newick('some data');
+import { Newick } from 'newick'
+
+const newick = new Newick('some data')
 ```
 
-## Usage (browser):
+## Documentation
 
-```js
-var newick = new Newick('some data');
-```
+[Github Wiki](https://github.com/octav47/NewickJS/wiki)
 
 ## TODO:
 * Newick.dfs: more tests
