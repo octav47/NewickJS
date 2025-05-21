@@ -1,0 +1,13 @@
+tests
+src
+
+.gitignore
+.npmrc
+.nvmrc
+
+jest.config.js
+package-lock.json
+prettier.config.js
+tsconfig.base.json
+tsconfig.cjs.json
+tsconfig.esm.json
