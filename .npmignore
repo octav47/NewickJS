@@ -1,5 +1,6 @@
-tests
+assets
 src
+tests
 
 .gitignore
 .npmrc

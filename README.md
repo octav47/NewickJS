@@ -1,4 +1,6 @@
-# NewickJS
+# newick
+
+<img src="./assets/logo.png" width="256">
 
 A lightweight and TypeScript-friendly library to parse, manipulate, and serialize trees in the [Newick format](https://en.wikipedia.org/wiki/Newick_format). Includes an OOP interface for clean and composable workflows.
 
@@ -26,7 +28,7 @@ yarn add newick
 ## 🔧 Usage
 
 ```ts
-import { Newick } from 'newickjs';
+import { Newick } from 'newick';
 
 const input = '(A:0.1,B:0.2)Root;';
 const tree = new Newick(input);
