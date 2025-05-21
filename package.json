@@ -2,14 +2,14 @@
   "name": "newick",
   "version": "3.0.0",
   "description": "A Newick tree parser",
-  "main": "dist/cjs/newick.js",
-  "module": "dist/esm/newick.js",
-  "types": "dist/esm/newick.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/newick.js",
-      "require": "./dist/cjs/newick.js",
-      "types": "./dist/esm/newick.d.ts"
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/esm/index.d.ts"
     }
   },
   "scripts": {
